@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastrar</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    
+    <div class="d-flex justify-content-center align-items-center" style="min-height: 100vh; background-color: #fff;">
+        <div class="card p-4" style="max-width: 400px; width: 100%; background-color: #fff;">
+            <h2 class="text-center mb-4">Cadastro</h2>
+            <form action="/register" method="POST">
+                <div class="form-group mb-3">
+                    <label for="username">Nome de Usuário:</label>
+                    <input type="text" class="form-control <%= error && error.includes('Nome de usuário já está em uso') ? 'is-invalid' : '' %>" id="username" name="username" value="<%= username %>" required>
+                    <% if (error && error.includes('Nome de usuário já está em uso')) { %>
+                        <div class="invalid-feedback">Nome de usuário já está em uso.</div>
+                    <% } %>
+                </div>
+                <div class="form-group mb-3">
+                    <label for="email">Email:</label>
+                    <input type="email" class="form-control <%= error && error.includes('Email já está em uso') ? 'is-invalid' : '' %>" id="email" name="email" value="<%= email %>" required>
+                    <% if (error && error.includes('Email já está em uso')) { %>
+                        <div class="invalid-feedback">Email já está em uso.</div>
+                    <% } %>
+                </div>
+                <div class="form-group mb-3">
+                    <label for="password">Senha:</label>
+                    <input type="password" class="form-control <%= error && error.includes('Senha') ? 'is-invalid' : '' %>" id="password" name="password" required>
+                    <% if (error && error.includes('Senha')) { %>
+                        <div class="invalid-feedback">Senha é obrigatória.</div>
+                    <% } %>
+                </div>
+                <div class="form-group mb-4">
+                    <label for="confirmPassword">Confirmar Senha:</label>
+                    <input type="password" class="form-control <%= error && (error.includes('As senhas não coincidem') || error.includes('Confirmar Senha')) ? 'is-invalid' : '' %>" id="confirmPassword" name="confirmPassword" required>
+                    <% if (error && (error.includes('As senhas não coincidem') || error.includes('Confirmar Senha'))) { %>
+                        <div class="invalid-feedback">As senhas não coincidem.</div>
+                    <% } %>
+                </div>
+                <button type="submit" class="btn btn-block" style="background-color: #0F006C; color: white;">Cadastrar</button>
+            </form>
+            <div class="text-center mt-3">
+                <a href="/login" style="color: #0F006C; font-weight: bold;">Já tenho conta, fazer login</a>
+            </div>
+        </div>
+    </div>
+
+    <%- include('partials/footer') %>
+</body>
+</html>

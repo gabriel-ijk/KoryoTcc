@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .form-control.is-invalid {
+            border-color: #dc3545;
+        }
+        .invalid-feedback {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="d-flex justify-content-center align-items-center" style="min-height: 100vh; background-color: #fff;">
+        <div class="card p-4" style="max-width: 400px; width: 100%; background-color: #fff;">
+            <h2 class="text-center mb-4">Login</h2>
+            <form action="/login" method="POST">
+                <div class="form-group mb-3">
+                    <label for="emailOrUsername">Email ou Nome de Usuário:</label>
+                    <input type="text" class="form-control <%= error ? 'is-invalid' : '' %>" id="emailOrUsername" name="emailOrUsername" required>
+                    <% if (error) { %>
+                        <div class="invalid-feedback">
+                            <%= error %>
+                        </div>
+                    <% } %>
+                </div>
+                <div class="form-group mb-3">
+                    <label for="password" style="color: #0F006C;">Senha:</label>
+                    <input type="password" class="form-control <%= error ? 'is-invalid' : '' %>" id="password" name="password" required>
+                </div>
+                <button type="submit" class="btn btn-block" style="background-color: #0F006C; color: white;">Entrar</button>
+            </form>
+            <div class="text-center mt-3">
+                <a href="/register" style="color: #0F006C; font-weight: bold;">Não tem conta? Cadastre-se</a>
+            </div>
+        </div>
+    </div>
+
+    <%- include('partials/footer') %>
+</body>
+</html>

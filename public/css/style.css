@@ -1,0 +1,53 @@
+@font-face {
+    font-family: 'horizonbold';
+    src:url('/fonts/horizon-webfont.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+
+}
+
+.navbar-nav{
+    font-family: 'horizonbold';
+}
+.navbar-brand{
+    font-family: 'horizonbold';
+}
+.efooter{
+    font-family: 'horizonbold';
+}
+
+.custom-carousel {
+    max-width: 71rem; /* Defina a largura máxima desejada */
+    margin: 0 auto; /* Centraliza o carrossel na página */
+}
+
+h1{
+    font-family: 'horizonbold';
+}
+
+h2{
+    font-family: 'horizonbold';
+}
+
+h3{
+    font-family: 'horizonbold';
+}
+
+h4{
+    font-family: 'horizonbold';
+}
+h5{
+    font-family: 'horizonbold';
+}
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s ease-in-out;
+}
+.text-justify {
+    text-align: justify;
+}
+.narrow-container {
+    max-width: 800px; /* Ajuste o valor conforme necessário */
+    margin: 0 auto; /* Centraliza a `div` na página */
+}

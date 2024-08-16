@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home</title>
+    <link rel="stylesheet" href="/public/css/style.css">
+</head>
+<body>
+    <header>
+        <!-- Barra de Navegação -->
+    </header>
+    
+    <main>
+        <h1>Bem-vindo ao site de Taekwondo</h1>
+        <!-- Conteúdo da página -->
+
+        <% if (session && session.user && session.user.is_admin) { %>
+            <a href="/admin/uploads" class="btn btn-primary">Ir para Uploads</a>
+        <% } %>
+    </main>
+
+    <footer>
+        <!-- Rodapé -->
+    </footer>
+</body>
+</html>
