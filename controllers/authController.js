@@ -43,7 +43,11 @@ module.exports = {
                     }
 
                     User.insertUser(username, email, hash)
-                        .then(() => res.redirect('/login'))
+                        .then(() => {
+                            // Após o registro, armazena o nome do usuário na sessão
+                            req.session.username = username; // Salva o nome do usuário na sessão
+                            res.redirect('/welcome'); // Redireciona para a página de boas-vindas
+                        })
                         .catch(err => {
                             console.error('Erro ao registrar o usuário:', err);
                             res.render('register', {
@@ -86,6 +90,7 @@ module.exports = {
                     }
 
                     if (isMatch) {
+                        // Armazena as informações do usuário na sessão
                         req.session.user = {
                             id: user.id,
                             username: user.username,
@@ -93,10 +98,11 @@ module.exports = {
                             is_admin: user.is_admin
                         };
 
+                        // Após o login, redireciona conforme o tipo de usuário
                         if (user.is_admin) {
                             res.redirect('/admin');
                         } else {
-                            res.redirect('/');
+                            res.redirect('/welcome'); // Redireciona para a página de boas-vindas após login
                         }
                     } else {
                         res.render('login', { error: 'Email/Usuário ou senha incorretos.' });
