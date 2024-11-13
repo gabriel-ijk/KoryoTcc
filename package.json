@@ -6,6 +6,9 @@
     "dev": "nodemon home.ejs",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "engines": {
+  "node": "16.x"
+},
   "keywords": [],
   "author": "",
   "license": "ISC",
