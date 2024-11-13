@@ -20,8 +20,7 @@
           </button>
           <div class="navbar-nav ml-auto">
             <a href="/account" class="nav-link">
-                <i class="bi bi-person fs-3
-                "></i>
+                <i class="bi bi-person fs-3"></i>
             </a>
         </div>
         </div>
@@ -32,6 +31,17 @@
         <h5>Bem-vindo, <%= username %>!</h5>
         <p>Estamos felizes em tê-lo aqui.</p>
         <a href="/logout">Sair</a>
+    </div>
+    <div class="videos-container">
+        <% videos.forEach(video => { %>
+            <div class="video-card">
+                <h2><%= video.title %></h2>
+                <p>Nível: <%= video.level %></p>
+                <p><%= video.description %></p>
+                <p>Data de publicação: <%= new Date(video.created_at).toLocaleDateString() %></p>
+                <iframe width="320" height="240" src="<%= video.youtube_url %>" frameborder="0" allowfullscreen></iframe>
+            </div>
+        <% }) %>
     </div>
 </body>
 </html>

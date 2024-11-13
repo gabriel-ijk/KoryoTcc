@@ -4,9 +4,10 @@ const User = {
     findByUsernameOrEmail: (username, email) => {
         return db.query('SELECT * FROM users WHERE username = ? OR email = ?', [username, email]);
     },
-    insertUser: (username, email, hash) => {
-        return db.query('INSERT INTO users (username, email, password) VALUES (?, ?, ?)', [username, email, hash]);
-    },
+    insertUser: (username, email, hash, name, surname, level) => {
+    return db.query('INSERT INTO users (username, email, password, name, surname, level) VALUES (?, ?, ?, ?, ?, ?)', 
+        [username, email, hash, name, surname, level]);
+},
     findByEmailOrUsername: (emailOrUsername) => {
         const sql = emailOrUsername.includes('@')
             ? 'SELECT * FROM users WHERE email = ?'
