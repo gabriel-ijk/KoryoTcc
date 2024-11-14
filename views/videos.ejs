@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vídeos de Taekwondo</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container mt-5">
+        <h1>Vídeos de Taekwondo</h1>
+        <form method="GET" action="/videos" class="mb-3">
+            <label for="colorFilter">Filtrar por cor:</label>
+            <select name="color" id="colorFilter" class="form-select" onchange="this.form.submit()">
+                <option value="">Todas</option>
+                <option value="branco" <%= selectedColor === 'branco' ? 'selected' : '' %>>Branco</option>
+                <option value="amarelo" <%= selectedColor === 'amarelo' ? 'selected' : '' %>>Amarelo</option>
+                <option value="verde" <%= selectedColor === 'verde' ? 'selected' : '' %>>Verde</option>
+                <option value="azul" <%= selectedColor === 'azul' ? 'selected' : '' %>>Azul</option>
+                <option value="vermelho" <%= selectedColor === 'vermelho' ? 'selected' : '' %>>Vermelho</option>
+            </select>
+        </form>
+
+        <div class="row">
+            <% videos.forEach(video => { %>
+                <div class="col-md-4 mb-4">
+                    <div class="card shadow-sm">
+                        <!-- Link para a página do player de vídeo -->
+                        <a href="/video/<%= video.youtube_url.split('v=')[1] %>">
+                            <!-- Imagem da miniatura do vídeo -->
+                            <img src="https://img.youtube.com/vi/<%= video.youtube_url.split('v=')[1] %>/0.jpg" class="card-img-top" alt="<%= video.title %>">
+                        </a>
+                        <div class="card-body">
+                            <h5 class="card-title"><%= video.title %></h5>
+                            <p class="card-text text-muted">Nível: <%= video.level %></p>
+                            <p class="card-text"><%= video.description %></p>
+                        </div>
+                    </div>
+                </div>
+            <% }) %>
+        </div>
+        
+        
+        
+    </div>
+</body>
+</html>

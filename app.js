@@ -4,6 +4,7 @@ const bodyParser = require('body-parser');
 const session = require('express-session');
 const app = express();
 const routes = require('./routes/index');
+const videoController = require('./controllers/videoController');
 
 // Configuração do EJS como view engine
 app.set('view engine', 'ejs');
@@ -21,6 +22,9 @@ app.use(session({
     resave: false,
     saveUninitialized: true
 }));
+
+// Rota para exibir a página de vídeos
+app.get('/videos', videoController.getVideos);
 
 // Configuração das rotas
 app.use('/', routes);

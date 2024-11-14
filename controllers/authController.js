@@ -2,15 +2,32 @@ const bcrypt = require('bcrypt');
 const User = require('../models/userModel');
 const saltRounds = 10;
 
+const validLevels = ['branca', 'amarela', 'verde', 'azul', 'vermelha'];
+
 module.exports = {
     register: (req, res) => {
-        const { username, email, password, confirmPassword } = req.body;
+        const { username, email, password, confirmPassword, name, surname, level } = req.body;
 
         if (password !== confirmPassword) {
             return res.render('register', {
                 error: 'As senhas não coincidem.',
                 username,
-                email
+                email,
+                name,
+                surname,
+                level
+            });
+        }
+
+        // Verifica se o nível é válido
+        if (!validLevels.includes(level)) {
+            return res.render('register', {
+                error: 'Graduação inválida.',
+                username,
+                email,
+                name,
+                surname,
+                level
             });
         }
 
@@ -28,7 +45,10 @@ module.exports = {
                     return res.render('register', {
                         error,
                         username,
-                        email
+                        email,
+                        name,
+                        surname,
+                        level
                     });
                 }
 
@@ -38,22 +58,27 @@ module.exports = {
                         return res.render('register', {
                             error: 'Erro ao registrar o usuário.',
                             username,
-                            email
+                            email,
+                            name,
+                            surname,
+                            level
                         });
                     }
 
-                    User.insertUser(username, email, hash)
+                    User.insertUser(username, email, hash, name, surname, level)
                         .then(() => {
-                            // Após o registro, armazena o nome do usuário na sessão
-                            req.session.username = username; // Salva o nome do usuário na sessão
-                            res.redirect('/welcome'); // Redireciona para a página de boas-vindas
+                            req.session.username = username;
+                            res.redirect('/welcome');
                         })
                         .catch(err => {
                             console.error('Erro ao registrar o usuário:', err);
                             res.render('register', {
                                 error: 'Erro ao registrar o usuário.',
                                 username,
-                                email
+                                email,
+                                name,
+                                surname,
+                                level
                             });
                         });
                 });
@@ -63,7 +88,10 @@ module.exports = {
                 res.render('register', {
                     error: 'Erro ao verificar dados do usuário.',
                     username,
-                    email
+                    email,
+                    name,
+                    surname,
+                    level
                 });
             });
     },
@@ -90,7 +118,6 @@ module.exports = {
                     }
 
                     if (isMatch) {
-                        // Armazena as informações do usuário na sessão
                         req.session.user = {
                             id: user.id,
                             username: user.username,
@@ -98,11 +125,10 @@ module.exports = {
                             is_admin: user.is_admin
                         };
 
-                        // Após o login, redireciona conforme o tipo de usuário
                         if (user.is_admin) {
                             res.redirect('/admin');
                         } else {
-                            res.redirect('/welcome'); // Redireciona para a página de boas-vindas após login
+                            res.redirect('/welcome');
                         }
                     } else {
                         res.render('login', { error: 'Email/Usuário ou senha incorretos.' });

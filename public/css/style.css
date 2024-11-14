@@ -8,6 +8,26 @@
 
 }
 
+ /* Estilo personalizado para a navbar */
+ .navbar-brand {
+    font-weight: bold;
+    font-size: 1.5rem;
+}
+.nav-link {
+    font-weight: bold;
+    color: black;
+}
+.nav-link.active {
+    color: #4a00e0;
+    border-bottom: 2px solid #4a00e0;
+}
+.navbar-nav .nav-link:hover {
+    color: #4a00e0;
+}
+.icon-user {
+    font-size: 1.2rem;
+}
+
 .navbar-nav{
     font-family: 'horizonbold';
 }
@@ -21,6 +41,32 @@
 .custom-carousel {
     max-width: 71rem; /* Defina a largura máxima desejada */
     margin: 0 auto; /* Centraliza o carrossel na página */
+}
+
+.main-video {
+    width: 100%;
+    height: 100%;
+}
+/* Estilo para vídeos relacionados */
+.related-video-container {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+.related-video {
+    width: 100%;
+    border-radius: 8px;
+    overflow: hidden;
+    aspect-ratio: 16/9;
+}
+.related-video img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+.related-title {
+    font-size: 0.9rem;
+    margin-top: 5px;
 }
 
 h1{
