@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Adicionar Conteúdo - KORYO</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container mt-5">
+        <h4 class="text-center mb-4">Adicionar Novo Conteúdo</h4>
+        
+        <form action="/add-content" method="POST">
+            <div class="mb-3">
+                <label for="title" class="form-label">Título do Vídeo</label>
+                <input type="text" class="form-control" id="title" name="title" required>
+            </div>
+
+            <div class="mb-3">
+                <label for="description" class="form-label">Descrição</label>
+                <textarea class="form-control" id="description" name="description" rows="3" required></textarea>
+            </div>
+
+            <div class="mb-3">
+                <label for="youtube_url" class="form-label">URL do Vídeo (YouTube)</label>
+                <input type="url" class="form-control" id="youtube_url" name="youtube_url" required>
+            </div>
+
+            <div class="mb-3">
+                <label for="level" class="form-label">Graduação</label>
+                <select class="form-select" id="level" name="level" required>
+                    <option value="" disabled selected>Selecione a Graduação</option>
+                    <option value="Branca">Branca</option>
+                    <option value="Amarela">Amarela</option>
+                    <option value="Verde">Verde</option>
+                    <option value="Azul">Azul</option>
+                    <option value="Vermelha">Vermelha</option>
+                </select>
+            </div>
+
+            <div class="mb-3">
+                <label for="categoria" class="form-label">Categoria</label>
+                <select class="form-select" id="categoria" name="categoria" required>
+                    <option value="" disabled selected>Selecione a Categoria</option>
+                    <option value="Poomsae">Poomsae</option>
+                    <option value="Técnicas de Chute">Técnicas de Chute</option>
+                    <option value="Técnicas de Soco">Técnicas de Soco</option>
+                    <option value="Técnicas de Defesa Pessoal">Técnicas de Defesa Pessoal</option>
+                </select>
+            </div>
+
+            <button type="submit" class="btn w-100" style="background-color: #0F006C; color: white;">Adicionar Conteúdo</button>
+
+        </form>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

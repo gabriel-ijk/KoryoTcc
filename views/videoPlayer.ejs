@@ -5,59 +5,112 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><%= video.title %></title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    
-    
+    <style>
+        /* Estilo para o player principal */
+        .main-video {
+            width: 100%;
+            height: 100%;
+        }
+        /* Bordas */
+        .video-border, .related-video-border {
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            overflow: hidden;
+            background-color: #f9f9f9;
+        }
+        /* Define proporção 16:9 */
+        .video-wrapper {
+            position: relative;
+            padding-top: 56.25%; /* Proporção 16:9 */
+        }
+        .video-wrapper iframe,
+        .video-wrapper img {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover; /* Corta bordas pretas nas miniaturas */
+        }
+        /* Centralizar e limitar a largura das colunas */
+        .content-wrapper {
+            max-width: 1200px;
+            margin: auto;
+            padding: 0 15px;
+        }
+        /* Estilo para a coluna principal com margem */
+        .main-video-column {
+            padding-right: 20px; /* Adiciona espaçamento à direita */
+        }
+        /* Estilo para a coluna de vídeos relacionados com margem */
+        .related-videos-column {
+            padding-left: 20px; /* Adiciona espaçamento à esquerda */
+        }
+        /* Estilo para títulos dos vídeos sugeridos */
+        .related-title {
+            font-size: 0.9rem;
+            margin-top: 5px;
+        }
+    </style>
 </head>
 <body>
-    <div class="container mt-5">
-        <div class="row">
-            <!-- Coluna Principal do Vídeo -->
-            <div class="col-lg-8">
-                <!-- Player de Vídeo -->
-                <div class="ratio ratio-16x9 mb-3">
-                    <iframe class="main-video" src="https://www.youtube.com/embed/<%= video.youtube_url.split('=')[1] %>" frameborder="0" allowfullscreen></iframe>
-                </div>
-
-                <!-- Informações do Vídeo -->
-                <div class="d-flex justify-content-between align-items-center mb-3">
-                    <h2 class="m-0"><%= video.title %></h2>
-                    <form action="/favorite/<%= video.id %>" method="POST">
-                        <button type="submit" class="btn btn-outline-primary">Favoritar</button>
-                    </form>
-                </div>
-                <p><%= video.description %></p>
-
-                <!-- Seção de Comentários -->
-                <div class="mt-5">
-                    <h4>Comentários</h4>
-                    <% comments.forEach(comment => { %>
-                        <div class="border rounded p-3 mb-3">
-                            <strong><%= comment.username %></strong> <small class="text-muted"><%= new Date(comment.date).toLocaleDateString() %></small>
-                            <p><%= comment.content %></p>
+    <div class="container-fluid mt-5">
+        <div class="content-wrapper">
+            <div class="row">
+                <!-- Coluna Principal do Vídeo -->
+                <div class="col-lg-8 main-video-column">
+                    <!-- Player de Vídeo com Borda -->
+                    <div class="video-border">
+                        <div class="video-wrapper">
+                            <iframe class="main-video" src="https://www.youtube.com/embed/<%= video.youtube_url.split('=')[1] %>" frameborder="0" allowfullscreen></iframe>
                         </div>
-                    <% }) %>
-
-                    <!-- Adicionar Novo Comentário -->
-                    <form action="/video/<%= video.youtube_url.split('=')[1] %>/comment" method="POST">
-                        <div class="mb-3">
-                            <textarea class="form-control" name="content" placeholder="Escreva um comentário..." required></textarea>
-                        </div>
-                        <button type="submit" class="btn btn-secondary">Comentar</button>
-                    </form>
-                </div>
-            </div>
-
-            <!-- Coluna de Vídeos Relacionados -->
-            <div class="col-lg-4">
-                <h5>Seguintes</h5>
-                <% relatedVideos.forEach(relatedVideo => { %>
-                    <div class="related-video-container">
-                        <a href="/video/<%= relatedVideo.youtube_url.split('=')[1] %>" class="related-video">
-                            <img src="https://img.youtube.com/vi/<%= relatedVideo.youtube_url.split('=')[1] %>/0.jpg" alt="<%= relatedVideo.title %>">
-                        </a>
                     </div>
-                    <p class="related-title"><%= relatedVideo.title %></p>
-                <% }) %>
+
+                    <!-- Informações do Vídeo -->
+                    <div class="d-flex justify-content-between align-items-center mb-3 mt-3">
+                        <h2 class="m-0"><%= video.title %></h2>
+                        <form action="/favorite/<%= video.id %>" method="POST">
+                            <button type="submit" class="btn btn-outline-primary">Favoritar</button>
+                        </form>
+                    </div>
+                    <p><%= video.description %></p>
+
+                    <!-- Seção de Comentários -->
+                    <div class="mt-5">
+                        <h4>Comentários</h4>
+                        <% comments.forEach(comment => { %>
+                            <div class="border rounded p-3 mb-3">
+                                <strong><%= comment.username %></strong> <small class="text-muted"><%= new Date(comment.date).toLocaleDateString() %></small>
+                                <p><%= comment.content %></p>
+                            </div>
+                        <% }) %>
+
+                        <!-- Adicionar Novo Comentário -->
+                        <form action="/video/<%= video.youtube_url.split('=')[1] %>/comment" method="POST">
+                            <div class="mb-3">
+                                <textarea class="form-control" name="content" placeholder="Escreva um comentário..." required></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-secondary">Comentar</button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Coluna de Vídeos Relacionados -->
+                <div class="col-lg-4 related-videos-column">
+                    <h5>Seguintes</h5>
+                    <% relatedVideos.forEach(relatedVideo => { 
+                        const videoId = relatedVideo.youtube_url.split('v=')[1] || relatedVideo.youtube_url.split('/').pop();
+                    %>
+                        <div class="related-video-border">
+                            <div class="video-wrapper">
+                                <a href="/video/<%= videoId %>">
+                                    <img src="https://img.youtube.com/vi/<%= videoId %>/0.jpg" alt="<%= relatedVideo.title %>">
+                                </a>
+                            </div>
+                        </div>
+                        <p class="related-title"><%= relatedVideo.title %></p>
+                    <% }) %>
+                </div>
             </div>
         </div>
     </div>

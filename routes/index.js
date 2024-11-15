@@ -8,25 +8,42 @@ const db = require('../models/db'); // Importa o módulo de conexão com o banco
 router.get('/', homeController.index);
 
 router.get('/welcome', async (req, res) => {
-    // Verifica se o usuário está autenticado
     if (req.session.user) {
         try {
-            // Obtenha o nível de graduação do usuário
+            const userId = req.session.user.id;
             const userLevel = req.session.user.level;
 
-            // Consulta para buscar os vídeos
-            const [videos] = await db.query('SELECT id, title, description, youtube_url, created_at, level FROM videos');
-            
-            // Renderiza a página welcome e passa o username, vídeos e nível do usuário para a view
-            res.render('welcome', { username: req.session.user.username, videos, userLevel });
+            if (!userId || !userLevel) {
+                throw new Error('User ID ou User Level estão indefinidos.');
+            }
+
+            // Consulta para obter todos os vídeos da graduação do usuário
+            const [videos] = await db.query('SELECT * FROM videos WHERE level = ?', [userLevel]);
+
+            // Consulta para contar quantos vídeos o usuário assistiu para essa graduação
+            const [watchedVideos] = await db.query(
+                'SELECT COUNT(*) AS watchedCount FROM watched_videos INNER JOIN videos ON watched_videos.video_id = videos.id WHERE watched_videos.user_id = ? AND videos.level = ?',
+                [userId, userLevel]
+            );
+
+            const progressPercentage = (watchedVideos[0].watchedCount / videos.length) * 100;
+
+            res.render('welcome', { 
+                username: req.session.user.username, 
+                videos, 
+                userLevel, 
+                progressPercentage: progressPercentage || 0 
+            });
         } catch (error) {
-            console.error("Erro ao buscar vídeos:", error);
-            res.status(500).send("Erro ao carregar vídeos.");
+            console.error("Erro ao buscar vídeos ou progresso:", error);
+            res.status(500).send("Erro ao carregar dados.");
         }
     } else {
-        res.redirect('/login'); // Redireciona para login se não estiver autenticado
+        res.redirect('/login');
     }
 });
+
+
 
 // Rota para exibir a página de perfil do usuário
 router.get('/account', async (req, res) => {
@@ -141,6 +158,19 @@ router.post('/favorite/:id', async (req, res) => {
         console.error('Erro ao favoritar vídeo:', error);
         res.status(500).send('Erro ao favoritar vídeo');
     }
+});
+
+function isAdmin(req, res, next) {
+    if (req.session.user && req.session.user.is_admin) {
+        next();
+    } else {
+        res.redirect('/login'); // Redireciona para login se não for admin
+    }
+}
+
+// Rota para a página de adicionar conteúdo
+router.get('/add-content', isAdmin, (req, res) => {
+    res.render('add-content'); // Renderiza a página de adicionar conteúdo
 });
 
 

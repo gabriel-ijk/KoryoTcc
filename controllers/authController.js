@@ -96,48 +96,53 @@ module.exports = {
             });
     },
     
-    login: (req, res) => {
-        const { emailOrUsername, password } = req.body;
+    // Exemplo de login no authController.js
+login: (req, res) => {
+    const { emailOrUsername, password } = req.body;
 
-        if (!emailOrUsername) {
-            return res.render('login', { error: 'Por favor, insira um email ou nome de usuário.' });
-        }
+    if (!emailOrUsername) {
+        return res.render('login', { error: 'Por favor, insira um email ou nome de usuário.' });
+    }
 
-        User.findByEmailOrUsername(emailOrUsername)
-            .then(([results]) => {
-                if (results.length === 0) {
-                    return res.render('login', { error: 'Email/Usuário ou senha incorretos.' });
+    User.findByEmailOrUsername(emailOrUsername)
+        .then(([results]) => {
+            if (results.length === 0) {
+                return res.render('login', { error: 'Email/Usuário ou senha incorretos.' });
+            }
+
+            const user = results[0];
+
+            bcrypt.compare(password, user.password, (err, isMatch) => {
+                if (err) {
+                    console.error('Erro ao comparar a senha:', err);
+                    return res.render('login', { error: 'Erro ao comparar a senha.' });
                 }
 
-                const user = results[0];
+                if (isMatch) {
+                    // Armazena todas as informações necessárias na sessão
+                    req.session.user = {
+                        id: user.id,
+                        username: user.username,
+                        email: user.email,
+                        is_admin: user.is_admin,
+                        level: user.level // Adiciona o nível do usuário
+                    };
 
-                bcrypt.compare(password, user.password, (err, isMatch) => {
-                    if (err) {
-                        console.error('Erro ao comparar a senha:', err);
-                        return res.render('login', { error: 'Erro ao comparar a senha.' });
-                    }
-
-                    if (isMatch) {
-                        req.session.user = {
-                            id: user.id,
-                            username: user.username,
-                            email: user.email,
-                            is_admin: user.is_admin
-                        };
-
-                        if (user.is_admin) {
-                            res.redirect('/admin');
-                        } else {
-                            res.redirect('/welcome');
-                        }
+                    // Redireciona conforme o tipo de usuário
+                    if (user.is_admin) {
+                        res.redirect('/admin');
                     } else {
-                        res.render('login', { error: 'Email/Usuário ou senha incorretos.' });
+                        res.redirect('/welcome');
                     }
-                });
-            })
-            .catch(err => {
-                console.error('Erro ao buscar o usuário:', err);
-                res.render('login', { error: 'Erro ao buscar o usuário.' });
+                } else {
+                    res.render('login', { error: 'Email/Usuário ou senha incorretos.' });
+                }
             });
-    }
+        })
+        .catch(err => {
+            console.error('Erro ao buscar o usuário:', err);
+            res.render('login', { error: 'Erro ao buscar o usuário.' });
+        });
+}
+  
 };
