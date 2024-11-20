@@ -3,7 +3,7 @@ const path = require('path');
 const bodyParser = require('body-parser');
 const session = require('express-session');
 const app = express();
-const routes = require('./routes/index');
+const routes = require('./index');
 const videoController = require('./controllers/videoController');
 const db = require('./models/db');
 
