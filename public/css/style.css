@@ -175,3 +175,271 @@ h5{
     align-items: center;
   }
 } 
+
+.main-video {
+    width: 100%;
+    height: 100%;
+}
+.video-border {
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    overflow: hidden;
+    background-color: #f9f9f9;
+}
+.video-wrapper {
+    position: relative;
+    padding-top: 56.25%;
+}
+.video-wrapper iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+.content-wrapper {
+    max-width: 1200px;
+    margin: auto;
+    padding: 0 15px;
+}
+.main-video-column {
+    padding-right: 20px;
+}
+/* Estilo ajustado para vídeos sugeridos */
+.suggested-video-card {
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;
+    padding: 0;
+    border: none;
+    background-color: transparent;
+}
+/* Miniatura maior, 20% maior do que antes */
+.suggested-video-thumbnail {
+    width: 156px; /* 20% maior que 90px */
+    height: 84px; /* 20% maior que 50px */
+    margin-right: 15px;
+    border-radius: 4px;
+    overflow: hidden;
+    position: relative;
+}
+.suggested-video-thumbnail img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Remove bordas pretas */
+}
+/* Texto ao lado da miniatura */
+.suggested-video-info {
+    font-size: 0.85rem;
+    color: #333;
+}
+.suggested-video-info strong {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 3px;
+}
+
+.content-wrapper {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+}
+.main-video {
+    width: 100%;
+    height: 100%;
+}
+.video-border {
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    overflow: hidden;
+    background-color: #f9f9f9;
+    margin-bottom: 20px;
+}
+.video-wrapper {
+    position: relative;
+    padding-top: 56.25%; /* Proporção 16:9 */
+}
+.video-wrapper iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+.btn-container {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+}
+.btn-container form {
+    display: inline-block;
+}
+
+/* Estilo para os comentários em formato de chat */
+.chat-container {
+    margin-top: 30px;
+    display: flex;
+    flex-direction: column-reverse; /* Exibe as mensagens da mais recente para a mais antiga */
+    max-height: 300px;
+    overflow-y: auto; /* Adiciona rolagem caso necessário */
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    padding: 10px;
+    background-color: #f9f9f9;
+}
+.chat-message {
+    display: flex;
+    align-items: flex-start;
+    margin-bottom: 10px;
+    max-width: 70%;
+}
+.chat-message.right {
+    justify-content: flex-end;
+    margin-left: auto;
+}
+.chat-message-content {
+    padding: 10px 15px;
+    border-radius: 15px;
+    background-color: #f1f1f1;
+    font-size: 14px;
+}
+.chat-message.right .chat-message-content {
+    background-color: #d1e7ff;
+    text-align: right;
+}
+.chat-message-username {
+    font-size: 12px;
+    font-weight: bold;
+    margin-bottom: 3px;
+}
+.chat-message .chat-message-content {
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+ .search-bar {
+            border-radius: 25px;
+            padding-left: 35px;
+            height: 38px;
+            width: 250px;
+            border: 1px solid #ced4da;
+            background-color: #f8f9fa;
+            background-repeat: no-repeat;
+            background-position: 10px center;
+            background-size: 18px;
+            font-size: 16px;
+            color: #6c757d;
+            font-weight: 400;
+        }
+        .progress-bar-custom {
+            background-color: #0F006C;
+        }
+        .card-img-top {
+            aspect-ratio: 16/9;
+            object-fit: cover;
+            max-height: 150px;
+            width: 100%;
+        }
+
+        .card {
+            border: none;
+            transition: transform 0.2s ease;
+            max-width: 200px;
+            margin: auto;
+        }
+
+        .card:hover {
+            transform: scale(1.05);
+        }
+
+        .video-carousel-container {
+            display: flex;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+            margin: 20px 0;
+        }
+
+        .carousel-btn {
+            background-color: #0F006C;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            cursor: pointer;
+            font-size: 18px;
+            border-radius: 50%;
+            z-index: 10;
+        }
+
+        .carousel-btn:hover {
+            background-color: #00008B;
+        }
+
+        .carousel-btn.left {
+            position: absolute;
+            left: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        .carousel-btn.right {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        .video-carousel {
+            display: flex;
+            gap: 16px;
+            overflow-x: auto;
+            scroll-behavior: smooth;
+            padding: 10px;
+            scrollbar-width: none;
+        }
+
+        .video-carousel::-webkit-scrollbar {
+            display: none;
+        }
+
+        .video-card {
+            flex: 0 0 250px;
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            text-align: center;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .video-card:hover {
+            transform: scale(1.05);
+        }
+
+        .video-thumbnail {
+            width: 100%;
+            height: auto;
+            object-fit: cover;
+            border: none;
+            background-color: transparent;
+            border-radius: 8px;
+        }
+
+        .video-info {
+            padding: 10px;
+        }
+
+        .video-title {
+            font-size: 16px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .video-description {
+            font-size: 14px;
+            color: #666;
+        }

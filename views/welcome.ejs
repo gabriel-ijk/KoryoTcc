@@ -8,26 +8,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.4/font/bootstrap-icons.css">
     <link rel="stylesheet" href="/css/style.css">
-    <style>
-        .search-bar {
-            border-radius: 25px;
-            padding-left: 35px;
-            height: 38px;
-            width: 250px;
-            border: 1px solid #ced4da;
-            background-color: #f8f9fa;
-            background-image: url("https://cdn.jsdelivr.net/npm/bootstrap-icons/icons/search.svg");
-            background-repeat: no-repeat;
-            background-position: 10px center;
-            background-size: 18px;
-            font-size: 16px;
-            color: #6c757d;
-            font-weight: 400;
-        }
-        .progress-bar-custom {
-            background-color: #0F006C;
-        }
-    </style>
+    
 </head>
 <body>
 
@@ -41,11 +22,9 @@
                 </button>
                 <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
                     <div class="navbar-nav ms-auto d-flex align-items-center">
-                        <!-- Campo de Busca -->
                         <form class="d-flex me-3" action="/search" method="GET">
                             <input type="search" class="form-control search-bar" name="query" placeholder="O que você quer aprender?" aria-label="Buscar">
                         </form>
-                        <!-- Ícone de Conta -->
                         <a href="/account" class="nav-link">
                             <i class="bi bi-person fs-3"></i>
                         </a>
@@ -66,52 +45,88 @@
     <!-- Barra de Progresso -->
     <div class="container">
         <h6>Progresso de Aprendizado</h6>
-        <div class="progress">
-            <div class="progress-bar progress-bar-custom" role="progressbar" style="width: <%= progressPercentage %>%;" aria-valuenow="<%= progressPercentage %>" aria-valuemin="0" aria-valuemax="100">
-                <%= progressPercentage %>%
+        <div class="progress mb-5">
+            <div class="progress-bar progress-bar-custom" role="progressbar"
+                 style="width: <%= progressPercentage || 0 %>%;"
+                 aria-valuenow="<%= progressPercentage || 0 %>"
+                 aria-valuemin="0"
+                 aria-valuemax="100">
+                <%= progressPercentage || 0 %>%
             </div>
         </div>
     </div>
 
-    <!-- Conteúdos de Graduação -->
-    <div class="container mt-5">
-        <h2 class="text-center mb-4">O que vamos aprender hoje?</h2>
-        
-        <!-- Exibição dos vídeos de acordo com a graduação do usuário -->
-        <div class="row">
-            <% videos.forEach(video => { %>
-                <% if (video.level === userLevel) { %> <!-- Exibe somente vídeos da graduação do usuário -->
-                    <div class="col-md-4 mb-4">
-                        <div class="card shadow-sm">
-                            <iframe class="card-img-top" width="100%" height="200" src="https://www.youtube.com/embed/<%= video.youtube_url.split('=')[1] %>" frameborder="0" allowfullscreen></iframe>
-                            <div class="card-body">
-                                <h5 class="card-title"><%= video.title %></h5>
-                                <p class="card-text text-muted">Nível: <%= video.level %></p>
-                                <p class="card-text"><%= video.description %></p>
-                                <button class="btn btn-primary w-100" onclick="updateProgress(<%= video.id %>)">Marcar como Assistido</button>
+    <!-- Subtítulo Antes do Carrossel -->
+    <div class="container mt-4">
+        <h5 class="mb-4 mt-5">Seguir no seu progresso?</h5>
+    </div>
+
+    <!-- Carrossel de Vídeos -->
+    <div class="container mt-4">
+        <div class="video-carousel-container">
+            <button class="carousel-btn left" onclick="scrollLeft()">←</button>
+            <div class="video-carousel">
+                <% videos.forEach(video => { %>
+                    <div class="video-card">
+                        <a href="/video/<%= video.youtube_url.split('=')[1] %>" class="text-decoration-none">
+                            <img src="https://img.youtube.com/vi/<%= video.youtube_url.split('=')[1] %>/hqdefault.jpg" 
+                                 class="video-thumbnail" 
+                                 alt="Thumbnail de <%= video.title %>">
+                            <div class="video-info">
+                                <h6 class="video-title"><%= video.title %></h6>
+                                <p class="video-description text-muted"><%= video.description %></p>
                             </div>
-                        </div>
+                        </a>
                     </div>
-                <% } %>
-            <% }); %>
+                <% }); %>
+            </div>
+            <button class="carousel-btn right" onclick="scrollRight()">→</button>
         </div>
     </div>
 
-    <!-- Script para atualizar a barra de progresso -->
+    <!-- Subtítulo Depois do Carrossel -->
+    <div class="container mt-4">
+        <h5 class="mb-4 mt-5">Ou veja seus favoritos</h5>
+    </div>
+    
+    <!-- Carrossel de Vídeos Favoritados -->
+    <div class="container mt-4">
+        <div class="video-carousel-container">
+            <button class="carousel-btn left" onclick="scrollFavoritesLeft()">←</button>
+            <div class="video-carousel">
+                <% favorites.forEach(favorite => { %>
+                    <div class="video-card">
+                        <a href="/video/<%= favorite.youtube_url.split('v=')[1] || favorite.id %>" class="text-decoration-none">
+                            <img src="https://img.youtube.com/vi/<%= favorite.youtube_url.split('v=')[1] || favorite.id %>/hqdefault.jpg" 
+                                 class="video-thumbnail" 
+                                 alt="Thumbnail de <%= favorite.title %>">
+                            <div class="video-info">
+                                <h6 class="video-title"><%= favorite.title %></h6>
+                                <p class="video-description text-muted"><%= favorite.description %></p>
+                            </div>
+                        </a>
+                        <!-- Botão de Desfavoritar -->
+                        <form action="/unfavorite/<%= favorite.id %>" method="POST">
+                            <button type="submit" class="btn btn-danger w-100 mt-2">Remover dos Favoritos</button>
+                        </form>
+                    </div>
+                <% }); %>
+            </div>
+            <button class="carousel-btn right" onclick="scrollFavoritesRight()">→</button>
+        </div>
+    </div>
+
+    <%- include('partials/footer') %>
+
     <script>
-        function updateProgress(videoId) {
-            fetch(`/mark-watched/${videoId}`, {
-                method: 'POST',
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    // Atualiza a barra de progresso na página
-                    document.querySelector('.progress-bar').style.width = `${data.newProgress}%`;
-                    document.querySelector('.progress-bar').innerText = `${data.newProgress}%`;
-                }
-            })
-            .catch(error => console.error('Erro ao atualizar progresso:', error));
+        function scrollLeft() {
+            const carousel = document.querySelector('.video-carousel');
+            carousel.scrollBy({ left: -300, behavior: 'smooth' });
+        }
+
+        function scrollRight() {
+            const carousel = document.querySelector('.video-carousel');
+            carousel.scrollBy({ left: 300, behavior: 'smooth' });
         }
     </script>
 
