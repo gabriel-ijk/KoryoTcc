@@ -4,6 +4,8 @@ const homeController = require('./controllers/homeController');
 const authController = require('./controllers/authController');
 const db = require('./models/db');
 
+const levelsOrder = ['branca', 'amarela', 'verde', 'azul', 'vermelha'];
+
 // Middleware para verificar autenticação
 function isAuthenticated(req, res, next) {
     if (req.session.user) {
@@ -70,13 +72,49 @@ router.get('/add-content', isAdmin, async (req, res) => {
 // Página inicial
 router.get('/', homeController.index);
 
-// Página de boas-vindas
 router.get('/welcome', isAuthenticated, async (req, res) => {
-    const userId = req.session.user.id; // Obter o ID do usuário logado
-
     try {
-        // Buscar os vídeos da graduação do usuário
-        const [videos] = await db.query('SELECT * FROM videos WHERE level = ?', [req.session.user.level]);
+        // Verifica se o usuário está logado e possui uma sessão válida
+        if (!req.session.user || !req.session.user.id || !req.session.user.level) {
+            console.error('Erro: Sessão de usuário inválida.');
+            return res.status(400).send('Erro: Usuário não autenticado ou informações incompletas.');
+        }
+
+        const userId = req.session.user.id; // Obter o ID do usuário logado
+        const userLevel = req.session.user.level;
+
+        const userLevelOrder = ['Branca', 'Amarela', 'Verde', 'Azul', 'Vermelha']; // Ordem das graduações
+
+        // Obter graduações inferiores
+        const userLevelIndex = userLevelOrder.indexOf(userLevel);
+        const lowerGradeLevels = userLevelOrder.slice(0, userLevelIndex); // Graduações anteriores
+
+        // Buscar vídeos da graduação do usuário
+        const [videos] = await db.query('SELECT * FROM videos WHERE level = ?', [userLevel]);
+
+        // Buscar vídeos assistidos
+        const [watchedVideos] = await db.query(
+            'SELECT video_id FROM watched_videos WHERE user_id = ?',
+            [userId]
+        );
+        const watchedVideoIds = watchedVideos.map(v => v.video_id);
+
+        // Adicionar propriedade `watched` aos vídeos do progresso
+        const videosWithWatchedStatus = videos.map(video => ({
+            ...video,
+            watched: watchedVideoIds.includes(video.id)
+        }));
+
+        let lowerGradeVideos = [];
+        // Só executa a query se houver graduações inferiores
+        if (lowerGradeLevels.length > 0) {
+            const placeholders = lowerGradeLevels.map(() => '?').join(','); // Gera `?, ?, ?` para graduações
+            const [lowerGradeResults] = await db.query(
+                `SELECT * FROM videos WHERE level IN (${placeholders}) ORDER BY FIELD(level, ${placeholders}) ASC, id ASC`,
+                [...lowerGradeLevels, ...lowerGradeLevels] // Passa graduações duas vezes: para IN e FIELD
+            );
+            lowerGradeVideos = lowerGradeResults;
+        }
 
         // Buscar os favoritos do usuário
         const [favorites] = await db.query(
@@ -84,26 +122,32 @@ router.get('/welcome', isAuthenticated, async (req, res) => {
             [userId]
         );
 
-        // Calcular o progresso (opcional, se for utilizado no template)
+        // Calcular o progresso
+        const [watchedCountResult] = await db.query(
+            `SELECT COUNT(*) AS watchedCount FROM watched_videos WHERE user_id = ? AND video_id IN (SELECT id FROM videos WHERE level = ?)`,
+            [userId, userLevel]
+        );
+        const watchedCount = watchedCountResult[0].watchedCount || 0;
         const progressPercentage = videos.length > 0
-            ? Math.round((await db.query(
-                `SELECT COUNT(*) AS watchedCount FROM watched_videos WHERE user_id = ? AND video_id IN (SELECT id FROM videos WHERE level = ?)`,
-                [userId, req.session.user.level]
-            ))[0][0].watchedCount / videos.length * 100)
+            ? Math.round((watchedCount / videos.length) * 100)
             : 0;
 
         // Renderizar o template e passar os dados
         res.render('welcome', {
             username: req.session.user.username,
             progressPercentage,
-            videos,
-            favorites // Enviando os favoritos para o template
+            videos: videosWithWatchedStatus, // Envia vídeos com a propriedade `watched`
+            favorites,
+            lowerGradeVideos, // Adicione esta nova lista
         });
     } catch (error) {
         console.error('Erro ao carregar a página de boas-vindas:', error);
         res.status(500).send('Erro ao carregar os dados.');
     }
 });
+
+
+
 
 // Página de vídeo
 router.get('/video/:id', isAuthenticated, async (req, res) => {
@@ -195,31 +239,64 @@ router.post('/video/:videoId/comment', isAuthenticated, async (req, res) => {
 });
 
 // Favoritar vídeo
-router.post('/favorite/:id', isAuthenticated, async (req, res) => {
-    const videoId = req.params.id;
-    const userId = req.session.user.id; // Assumindo que o ID do usuário está na sessão
-
+router.post('/favorite/:id', async (req, res) => {
     try {
-        // Verifica se o vídeo já está favoritado
-        const [existingFavorite] = await db.query(
-            'SELECT * FROM favorites WHERE user_id = ? AND video_id = ?',
-            [userId, videoId]
-        );
+        const videoId = req.params.id;
+        const userId = req.session.user.id;
 
-        if (existingFavorite.length > 0) {
-            return res.redirect(`/video/${videoId}`); // Já está favoritado, redireciona sem duplicar
+        if (!userId) {
+            return res.status(401).send('Usuário não autenticado.');
         }
 
-        // Insere o favorito no banco de dados
-        await db.query(
-            'INSERT INTO favorites (user_id, video_id) VALUES (?, ?)',
-            [userId, videoId]
-        );
+        // Inserir nos favoritos
+        const query = `INSERT INTO favorites (user_id, video_id) VALUES (?, ?)`;
+        await db.query(query, [userId, videoId]);
 
-        res.redirect(`/video/${videoId}`); // Redireciona de volta para a página do vídeo
+        res.redirect('/welcome');
     } catch (error) {
-        console.error('Erro ao favoritar vídeo:', error);
+        console.error('Erro ao favoritar o vídeo:', error);
         res.status(500).send('Erro ao favoritar o vídeo.');
+    }
+});
+
+router.post('/unfavorite/:id', async (req, res) => {
+    try {
+        const videoId = req.params.id;
+        const userId = req.session.user.id;
+
+        if (!userId) {
+            return res.status(401).send('Usuário não autenticado.');
+        }
+
+        const query = `DELETE FROM favorites WHERE user_id = ? AND video_id = ?`;
+        await db.query(query, [userId, videoId]);
+
+        res.redirect('/welcome');
+    } catch (error) {
+        console.error('Erro ao desfavoritar o vídeo:', error);
+        res.status(500).send('Erro ao desfavoritar o vídeo.');
+    }
+});
+router.post('/mark-watched/:id', async (req, res) => {
+    try {
+        const userId = req.session.user.id;
+        const videoId = req.params.id;
+
+        if (!userId || !videoId) {
+            return res.status(400).send('Usuário ou vídeo inválido.');
+        }
+
+        const query = `
+            INSERT INTO watched_videos (user_id, video_id) 
+            VALUES (?, ?) 
+            ON DUPLICATE KEY UPDATE user_id = user_id
+        `;
+        await db.query(query, [userId, videoId]);
+
+        res.redirect('/welcome'); // Redireciona para atualizar a página
+    } catch (error) {
+        console.error('Erro ao marcar como assistido:', error);
+        res.status(500).send('Erro ao marcar o vídeo como assistido.');
     }
 });
 
@@ -233,8 +310,22 @@ router.get('/account', isAuthenticated, async (req, res) => {
     }
 
     try {
+        const userLevelOrder = ['branca', 'amarela', 'verde', 'azul', 'vermelha']; // Ordem das graduações
+
         const [userResults] = await db.query('SELECT * FROM users WHERE id = ?', [userId]);
         const user = userResults[0];
+
+        // Calcular progresso do usuário
+        const [videos] = await db.query('SELECT * FROM videos WHERE level = ?', [user.level]);
+        const [watchedCountResult] = await db.query(
+            'SELECT COUNT(*) AS watchedCount FROM watched_videos WHERE user_id = ? AND video_id IN (SELECT id FROM videos WHERE level = ?)',
+            [userId, user.level]
+        );
+
+        const watchedCount = watchedCountResult[0].watchedCount || 0;
+        const progressPercentage = videos.length > 0
+            ? Math.round((watchedCount / videos.length) * 100)
+            : 0;
 
         const [watchedVideosResults] = await db.query(`
             SELECT videos.title, videos.description, watched_videos.watched_at 
@@ -246,13 +337,17 @@ router.get('/account', isAuthenticated, async (req, res) => {
 
         res.render('account', {
             user,
-            watchedVideos: watchedVideosResults
+            watchedVideos: watchedVideosResults,
+            progressPercentage,
+            userLevelOrder // Adicionar ao template
         });
     } catch (error) {
         console.error('Erro ao carregar a página de perfil:', error);
         res.status(500).send('Erro ao carregar a página de perfil.');
     }
 });
+
+
 
 
 // Atualizar perfil
@@ -272,6 +367,15 @@ router.post('/account', isAuthenticated, async (req, res) => {
         console.error('Erro ao atualizar perfil:', error);
         res.status(500).send('Erro ao atualizar perfil.');
     }
+});
+router.get('/logout', (req, res) => {
+    req.session.destroy((err) => {
+        if (err) {
+            console.error('Erro ao encerrar a sessão:', err);
+            return res.status(500).send('Erro ao encerrar a sessão.');
+        }
+        res.redirect('/login');
+    });
 });
 
 // Rotas de autenticação

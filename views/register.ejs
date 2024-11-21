@@ -5,38 +5,47 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cadastrar</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
     <div class="d-flex justify-content-center align-items-center" style="min-height: 100vh; background-color: #fff;">
         <div class="card p-4" style="max-width: 400px; width: 100%; background-color: #fff;">
             <h2 class="text-center mb-4">Cadastro</h2>
+
+            <!-- Exibir mensagens de erro -->
+            <% if (error) { %>
+                <div class="alert alert-danger" role="alert">
+                    <%= error %>
+                </div>
+            <% } %>
+
             <form action="/register" method="POST">
                 <div class="form-group mb-3">
                     <label for="name">Nome:</label>
-                    <input type="text" class="form-control" id="name" name="name" required>
+                    <input type="text" class="form-control" id="name" name="name" value="<%= name || '' %>" required>
                 </div>
                 <div class="form-group mb-3">
                     <label for="surname">Sobrenome:</label>
-                    <input type="text" class="form-control" id="surname" name="surname" required>
+                    <input type="text" class="form-control" id="surname" name="surname" value="<%= surname || '' %>" required>
                 </div>
                 <div class="form-group mb-3">
                     <label for="level">Graduação (Cor):</label>
                     <select class="form-control" id="level" name="level" required>
-                        <option value="branco">Branco</option>
-                        <option value="amarelo">Amarelo</option>
-                        <option value="verde">Verde</option>
-                        <option value="azul">Azul</option>
-                        <option value="vermelho">Vermelho</option>
+                        <option value="" disabled <%= !level ? 'selected' : '' %>>Selecione</option>
+                        <option value="branco" <%= level === 'branco' ? 'selected' : '' %>>Branco</option>
+                        <option value="amarelo" <%= level === 'amarelo' ? 'selected' : '' %>>Amarelo</option>
+                        <option value="verde" <%= level === 'verde' ? 'selected' : '' %>>Verde</option>
+                        <option value="azul" <%= level === 'azul' ? 'selected' : '' %>>Azul</option>
+                        <option value="vermelho" <%= level === 'vermelho' ? 'selected' : '' %>>Vermelho</option>
                     </select>
                 </div>
                 <div class="form-group mb-3">
                     <label for="username">Nome de Usuário:</label>
-                    <input type="text" class="form-control" id="username" name="username" value="<%= username %>" required>
+                    <input type="text" class="form-control" id="username" name="username" value="<%= username || '' %>" required>
                 </div>
                 <div class="form-group mb-3">
                     <label for="email">Email:</label>
-                    <input type="email" class="form-control" id="email" name="email" value="<%= email %>" required>
+                    <input type="email" class="form-control" id="email" name="email" value="<%= email || '' %>" required>
                 </div>
                 <div class="form-group mb-3">
                     <label for="password">Senha:</label>
@@ -52,8 +61,16 @@
                 <a href="/login" style="color: #0F006C; font-weight: bold;">Já tenho conta, fazer login</a>
             </div>
         </div>
-    </div>
-
+    </div> 
     <%- include('partials/footer') %>
 </body>
 </html>
+
+
+
+
+
+
+
+   
+

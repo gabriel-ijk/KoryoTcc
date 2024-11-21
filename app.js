@@ -8,7 +8,6 @@ const videoController = require('./controllers/videoController');
 const db = require('./models/db');
 
 
-
 // Configuração do EJS como view engine
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
@@ -61,5 +60,4 @@ const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
     console.log(`Servidor rodando na porta ${PORT}`);
 });
-
 

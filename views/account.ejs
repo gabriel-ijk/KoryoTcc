@@ -94,95 +94,103 @@
 
 <body>
 
-<div class="container">
-    <!-- Botão de Voltar -->
-    <div class="mb-4">
-        <a href="/welcome" class="btn-back">
-            <i class="bi bi-arrow-left"></i> Voltar para Início
-        </a>
-    </div>
-
-    <!-- Título -->
-    <h3 class="mb-4 text-center">Meu Perfil</h3>
-
-    <!-- Card do Perfil -->
-    <div class="profile-card">
-        <ul class="nav nav-tabs">
-            <li class="nav-item">
-                <button class="nav-link active" id="user-data-tab" data-bs-toggle="tab" data-bs-target="#user-data" type="button">
-                    Dados do Usuário
-                </button>
-            </li>
-            <li class="nav-item">
-                <button class="nav-link" id="history-tab" data-bs-toggle="tab" data-bs-target="#history" type="button">
-                    Histórico de Vídeos
-                </button>
-            </li>
-        </ul>
-
-        <div class="tab-content mt-4">
-            <!-- Dados do Usuário -->
-            <div class="tab-pane fade show active" id="user-data">
-                <form action="/account" method="POST">
-                    <div class="mb-3">
-                        <label for="username" class="form-label">Nome de Usuário</label>
-                        <input type="text" class="form-control" id="username" name="username" value="<%= user.username %>" required>
-                    </div>
-
-                    <div class="mb-3">
-                        <label for="email" class="form-label">Email</label>
-                        <input type="email" class="form-control" id="email" name="email" value="<%= user.email %>" required>
-                    </div>
-
-                    <div class="mb-3">
-                        <label for="name" class="form-label">Nome</label>
-                        <input type="text" class="form-control" id="name" name="name" value="<%= user.name %>" required>
-                    </div>
-
-                    <div class="mb-3">
-                        <label for="surname" class="form-label">Sobrenome</label>
-                        <input type="text" class="form-control" id="surname" name="surname" value="<%= user.surname %>" required>
-                    </div>
-
-                    <div class="mb-3">
-                        <label for="level" class="form-label">Graduação</label>
-                        <select class="form-select" id="level" name="level" required>
-                            <option value="branca" <%= user.level === 'branca' ? 'selected' : '' %>>Branca</option>
-                            <option value="amarela" <%= user.level === 'amarela' ? 'selected' : '' %>>Amarela</option>
-                            <option value="verde" <%= user.level === 'verde' ? 'selected' : '' %>>Verde</option>
-                            <option value="azul" <%= user.level === 'azul' ? 'selected' : '' %>>Azul</option>
-                            <option value="vermelha" <%= user.level === 'vermelha' ? 'selected' : '' %>>Vermelha</option>
-                        </select>
-                    </div>
-
-                    <button type="submit" class="btn btn-primary w-100">Salvar Alterações</button>
-                </form>
-            </div>
-
-            <!-- Histórico de Vídeos -->
-            <div class="tab-pane fade" id="history">
-                <table class="table table-borderless">
-                    <thead>
-                    <tr>
-                        <th>Título</th>
-                        <th>Descrição</th>
-                        <th>Data</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <% watchedVideos.forEach(video => { %>
+    <div class="container">
+        <!-- Botão de Voltar -->
+        <div class="mb-4 d-flex justify-content-between">
+            <a href="/welcome" class="btn-back">
+                <i class="bi bi-arrow-left"></i> Voltar para Início
+            </a>
+            <a href="/logout" class="btn btn-danger">Logout</a>
+        </div>
+    
+        <!-- Título -->
+        <h3 class="mb-4 text-center">Meu Perfil</h3>
+    
+        <!-- Card do Perfil -->
+        <div class="profile-card">
+            <ul class="nav nav-tabs">
+                <li class="nav-item">
+                    <button class="nav-link active" id="user-data-tab" data-bs-toggle="tab" data-bs-target="#user-data" type="button">
+                        Dados do Usuário
+                    </button>
+                </li>
+                <li class="nav-item">
+                    <button class="nav-link" id="history-tab" data-bs-toggle="tab" data-bs-target="#history" type="button">
+                        Histórico de Vídeos
+                    </button>
+                </li>
+            </ul>
+    
+            <div class="tab-content mt-4">
+                <!-- Dados do Usuário -->
+                <div class="tab-pane fade show active" id="user-data">
+                    <form action="/account" method="POST">
+                        <div class="mb-3">
+                            <label for="username" class="form-label">Nome de Usuário</label>
+                            <input type="text" class="form-control" id="username" name="username" value="<%= user.username %>" required>
+                        </div>
+    
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email</label>
+                            <input type="email" class="form-control" id="email" name="email" value="<%= user.email %>" required>
+                        </div>
+    
+                        <div class="mb-3">
+                            <label for="name" class="form-label">Nome</label>
+                            <input type="text" class="form-control" id="name" name="name" value="<%= user.name %>" required>
+                        </div>
+    
+                        <div class="mb-3">
+                            <label for="surname" class="form-label">Sobrenome</label>
+                            <input type="text" class="form-control" id="surname" name="surname" value="<%= user.surname %>" required>
+                        </div>
+    
+                        <div class="mb-3">
+                            <label for="level" class="form-label">Graduação</label>
+                            <select class="form-select" id="level" name="level" required>
+                                <option value="branca" <%= user.level === 'branca' ? 'selected' : '' %>>Branca</option>
+                                <option value="amarela" <%= user.level === 'amarela' ? 'selected' : '' %>
+                                    <%= progressPercentage < 100 && userLevelOrder.indexOf('amarela') > userLevelOrder.indexOf(user.level) ? 'disabled' : '' %>>Amarela</option>
+                                <option value="verde" <%= user.level === 'verde' ? 'selected' : '' %>
+                                    <%= progressPercentage < 100 && userLevelOrder.indexOf('verde') > userLevelOrder.indexOf(user.level) ? 'disabled' : '' %>>Verde</option>
+                                <option value="azul" <%= user.level === 'azul' ? 'selected' : '' %>
+                                    <%= progressPercentage < 100 && userLevelOrder.indexOf('azul') > userLevelOrder.indexOf(user.level) ? 'disabled' : '' %>>Azul</option>
+                                <option value="vermelha" <%= user.level === 'vermelha' ? 'selected' : '' %>
+                                    <%= progressPercentage < 100 && userLevelOrder.indexOf('vermelha') > userLevelOrder.indexOf(user.level) ? 'disabled' : '' %>>Vermelha</option>
+                            </select>
+                            <% if (progressPercentage < 100) { %>
+                                <small class="text-muted">Você só pode mudar para graduações superiores após atingir 100% de progresso.</small>
+                            <% } %>
+                        </div>
+    
+                        <button type="submit" class="btn btn-primary w-100">Salvar Alterações</button>
+                    </form>
+                </div>
+    
+                <!-- Histórico de Vídeos -->
+                <div class="tab-pane fade" id="history">
+                    <table class="table table-borderless">
+                        <thead>
                         <tr>
-                            <td><%= video.title %></td>
-                            <td><%= video.description %></td>
-                            <td><%= new Date(video.watched_at).toLocaleDateString() %></td>
+                            <th>Título</th>
+                            <th>Descrição</th>
+                            <th>Data</th>
                         </tr>
-                    <% }) %>
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+                        <% watchedVideos.forEach(video => { %>
+                            <tr>
+                                <td><%= video.title %></td>
+                                <td><%= video.description %></td>
+                                <td><%= new Date(video.watched_at).toLocaleDateString() %></td>
+                            </tr>
+                        <% }) %>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </div>
-</div>
 
 <%- include('partials/footer') %>
 

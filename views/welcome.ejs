@@ -22,9 +22,6 @@
                 </button>
                 <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
                     <div class="navbar-nav ms-auto d-flex align-items-center">
-                        <form class="d-flex me-3" action="/search" method="GET">
-                            <input type="search" class="form-control search-bar" name="query" placeholder="O que você quer aprender?" aria-label="Buscar">
-                        </form>
                         <a href="/account" class="nav-link">
                             <i class="bi bi-person fs-3"></i>
                         </a>
@@ -56,17 +53,41 @@
         </div>
     </div>
 
-    <!-- Subtítulo Antes do Carrossel -->
-    <div class="container mt-4">
-        <h5 class="mb-4 mt-5">Seguir no seu progresso?</h5>
-    </div>
 
     <!-- Carrossel de Vídeos -->
     <div class="container mt-4">
+        <h5 class="mb-4 mt-5">Seguir no seu progresso?</h5>
         <div class="video-carousel-container">
-            <button class="carousel-btn left" onclick="scrollLeft()">←</button>
-            <div class="video-carousel">
+            <button class="carousel-btn left" onclick="scrollCarousel('progressCarousel', 'left')">←</button>
+            <div id="progressCarousel" class="video-carousel">
                 <% videos.forEach(video => { %>
+                    <div class="video-card">
+                        <a href="/video/<%= video.youtube_url.split('=')[1] %>" class="text-decoration-none">
+                            <img src="https://img.youtube.com/vi/<%= video.youtube_url.split('=')[1] %>/hqdefault.jpg" 
+                                 class="video-thumbnail" 
+                                 alt="Thumbnail de <%= video.title %>">
+                            <div class="video-info">
+                                <h6 class="video-title"><%= video.title %></h6>
+                                <p class="video-description text-muted"><%= video.description %></p>
+                            </div>
+                        </a>
+                        <% if (video.watched) { %>
+                            <div class="watched-tag">Assistido</div>
+                        <% } %>
+                    </div>
+                <% }); %>
+            </div>
+            <button class="carousel-btn right" onclick="scrollCarousel('progressCarousel', 'right')">→</button>
+        </div>
+    </div>
+    
+    <!-- Carrossel de Graduações Inferiores -->
+    <div class="container mt-4">
+        <h5 class="mb-4 mt-5">Ou reveja algumas técnicas</h5>
+        <div class="video-carousel-container">
+            <button class="carousel-btn left" onclick="scrollCarousel('lowerGradesCarousel', 'left')">←</button>
+            <div id="lowerGradesCarousel" class="video-carousel">
+                <% lowerGradeVideos.forEach(video => { %>
                     <div class="video-card">
                         <a href="/video/<%= video.youtube_url.split('=')[1] %>" class="text-decoration-none">
                             <img src="https://img.youtube.com/vi/<%= video.youtube_url.split('=')[1] %>/hqdefault.jpg" 
@@ -80,9 +101,11 @@
                     </div>
                 <% }); %>
             </div>
-            <button class="carousel-btn right" onclick="scrollRight()">→</button>
+            <button class="carousel-btn right" onclick="scrollCarousel('lowerGradesCarousel', 'right')">→</button>
         </div>
     </div>
+
+    
 
     <!-- Subtítulo Depois do Carrossel -->
     <div class="container mt-4">
@@ -119,15 +142,19 @@
     <%- include('partials/footer') %>
 
     <script>
-        function scrollLeft() {
-            const carousel = document.querySelector('.video-carousel');
+     function scrollCarousel(carouselId, direction) {
+    const carousel = document.getElementById(carouselId);
+    if (carousel) {
+        if (direction === 'left') {
             carousel.scrollBy({ left: -300, behavior: 'smooth' });
-        }
-
-        function scrollRight() {
-            const carousel = document.querySelector('.video-carousel');
+        } else if (direction === 'right') {
             carousel.scrollBy({ left: 300, behavior: 'smooth' });
         }
+    } else {
+        console.error(`Carrossel com ID "${carouselId}" não encontrado.`);
+    }
+}
+
     </script>
 
     <!-- Bootstrap JS -->

@@ -345,12 +345,7 @@ h5{
             width: 100%;
         }
 
-        .card {
-            border: none;
-            transition: transform 0.2s ease;
-            max-width: 200px;
-            margin: auto;
-        }
+        
 
         .card:hover {
             transform: scale(1.05);
@@ -443,3 +438,91 @@ h5{
             font-size: 14px;
             color: #666;
         }
+
+        .carousel-card {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background-color: #fff;
+            text-align: center;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s ease-in-out;
+            margin: 10px;
+            flex: 0 0 200px;
+            max-width: 200px;
+        }
+        
+        .carousel-card:hover {
+            transform: scale(1.05);
+        }
+        
+        .carousel-card-header {
+            background-color: #ffc107; /* Cor de fundo do cabeçalho */
+            border-radius: 8px 8px 0 0;
+            padding: 10px;
+            font-weight: bold;
+            font-size: 1rem;
+            color: #000;
+        }
+        
+        .carousel-card-title {
+            font-size: 1rem;
+            font-weight: bold;
+            margin: 10px 0;
+            text-transform: uppercase;
+        }
+        
+        .carousel-card-description {
+            font-size: 0.9rem;
+            color: #555;
+            margin: 10px 0;
+        }
+        
+        .carousel-wrapper {
+            display: flex;
+            align-items: center;
+            overflow-x: auto;
+            padding: 10px;
+            scrollbar-width: none; /* Remove a barra de rolagem */
+        }
+        
+        .carousel-wrapper::-webkit-scrollbar {
+            display: none; /* Remove a barra de rolagem no Chrome */
+        }
+        
+        .carousel-btn {
+            background-color: #0F006C;
+            color: #fff;
+            border: none;
+            padding: 10px 15px;
+            font-size: 18px;
+            border-radius: 50%;
+            cursor: pointer;
+            position: absolute;
+            z-index: 10;
+        }
+        
+        .carousel-btn.left {
+            left: 10px;
+        }
+        
+        .carousel-btn.right {
+            right: 10px;
+        }
+
+        .watched-tag {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            background-color: rgba(0, 128, 0, 0.8); /* Verde com opacidade */
+            color: white;
+            font-size: 0.9rem;
+            font-weight: bold;
+            padding: 4px 8px;
+            border-radius: 4px;
+            box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.2);
+        }
+        .video-card {
+            position: relative; /* Necessário para a posição da tag */
+        }
+        
+        
