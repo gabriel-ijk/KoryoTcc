@@ -7,12 +7,14 @@ const db = require('./models/db');
 const levelsOrder = ['branca', 'amarela', 'verde', 'azul', 'vermelha'];
 
 // Middleware para verificar autenticação
-function isAuthenticated(req, res, next) {
-    if (req.session.user) {
-        return next();
+const isAuthenticated = (req, res, next) => {
+    if (req.session && req.session.user && req.session.user.id) {
+        return next(); // Sessão válida, continua para a rota
     }
-    res.redirect('/login');
-}
+    console.error('Erro: Sessão de usuário inválida.');
+    return res.redirect('/login'); // Redireciona para login
+};
+
 
 // Middleware para verificar se é admin
 function isAdmin(req, res, next) {
