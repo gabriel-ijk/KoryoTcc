@@ -77,18 +77,23 @@ router.get('/', homeController.index);
 router.get('/welcome', isAuthenticated, async (req, res) => {
     try {
         // Verifica se o usuário está logado e possui uma sessão válida
-        if (!req.session.user || !req.session.user.id || !req.session.user.level) {
+        const user = req.session.user;
+        if (!user || !user.id || !user.level) {
             console.error('Erro: Sessão de usuário inválida.');
-            return res.status(400).send('Erro: Usuário não autenticado ou informações incompletas.');
+            return res.redirect('/login'); // Redireciona para login
         }
 
-        const userId = req.session.user.id; // Obter o ID do usuário logado
-        const userLevel = req.session.user.level;
+        const userId = user.id; // Obter o ID do usuário logado
+        const userLevel = user.level;
 
         const userLevelOrder = ['Branca', 'Amarela', 'Verde', 'Azul', 'Vermelha']; // Ordem das graduações
 
         // Obter graduações inferiores
         const userLevelIndex = userLevelOrder.indexOf(userLevel);
+        if (userLevelIndex === -1) {
+            console.error('Erro: Graduação inválida.');
+            return res.status(400).send('Erro: Graduação inválida.');
+        }
         const lowerGradeLevels = userLevelOrder.slice(0, userLevelIndex); // Graduações anteriores
 
         // Buscar vídeos da graduação do usuário
@@ -104,7 +109,7 @@ router.get('/welcome', isAuthenticated, async (req, res) => {
         // Adicionar propriedade `watched` aos vídeos do progresso
         const videosWithWatchedStatus = videos.map(video => ({
             ...video,
-            watched: watchedVideoIds.includes(video.id)
+            watched: watchedVideoIds.includes(video.id) || false // Sempre define `watched`
         }));
 
         let lowerGradeVideos = [];
@@ -136,7 +141,7 @@ router.get('/welcome', isAuthenticated, async (req, res) => {
 
         // Renderizar o template e passar os dados
         res.render('welcome', {
-            username: req.session.user.username,
+            username: user.username,
             progressPercentage,
             videos: videosWithWatchedStatus, // Envia vídeos com a propriedade `watched`
             favorites,
@@ -147,6 +152,7 @@ router.get('/welcome', isAuthenticated, async (req, res) => {
         res.status(500).send('Erro ao carregar os dados.');
     }
 });
+
 
 
 
